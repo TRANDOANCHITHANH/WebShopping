@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using WebShopping.Repository;
+
 namespace WebShopping
 {
     public class Program
@@ -5,7 +8,11 @@ namespace WebShopping
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.AddDbContext<DataContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration["ConnectionStrings:ConnectedDb"]);
+            }
+            );
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
@@ -25,7 +32,8 @@ namespace WebShopping
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-
+            var context = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
+            SeedData.SeedingData(context);
             app.Run();
         }
     }
