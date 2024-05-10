@@ -17,7 +17,7 @@ namespace WebShopping
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
-
+            app.UseSession();
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {

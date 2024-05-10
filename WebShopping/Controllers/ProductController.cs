@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebShopping.Models;
 using WebShopping.Repository;
 
 namespace WebShopping.Controllers
@@ -15,9 +17,15 @@ namespace WebShopping.Controllers
 		{
 			return View();
 		}
-		public IActionResult Details()
+		public async Task<IActionResult> Details(int Id)
 		{
-			return View();
+			if(Id == null)
+			{
+				return RedirectToAction("Index");	
+			}
+			
+			var productsById = _dataContext.Products.Where(p => p.Id == Id).FirstOrDefault();
+			return View( productsById);
 		}
 	}
 }
