@@ -33,11 +33,16 @@ namespace WebShopping
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.MapControllerRoute(
+			app.MapControllerRoute(
+			   name: "areas",
+			pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+				);
+			app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            var context = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
+			
+
+			var context = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
             SeedData.SeedingData(context);
             app.Run();
         }
