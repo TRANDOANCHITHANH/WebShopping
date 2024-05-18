@@ -22,6 +22,7 @@ namespace WebShopping
                 options.Cookie.IsEssential = true;  
             });
             var app = builder.Build();
+            app.UseStatusCodePagesWithRedirects("/Home/Error?statuscode={0}");
             app.UseSession();
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -37,7 +38,20 @@ namespace WebShopping
 			   name: "areas",
 			pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
 				);
-			app.MapControllerRoute(
+
+            app.MapControllerRoute(
+               name: "category",
+            pattern: "/category/{Slug?}",
+            defaults: new {controller="Category",action="Index"}
+                ) ;
+
+            app.MapControllerRoute(
+              name: "brand",
+           pattern: "/brand/{Slug?}",
+           defaults: new { controller = "Brand", action = "Index" }
+               );
+
+            app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 			
