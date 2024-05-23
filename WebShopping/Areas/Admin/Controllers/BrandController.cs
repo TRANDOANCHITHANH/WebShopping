@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebShopping.Models;
 using WebShopping.Repository;
@@ -6,7 +7,8 @@ using WebShopping.Repository;
 namespace WebShopping.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class BrandController : Controller
+	[Authorize]
+	public class BrandController : Controller
     {
         private readonly DataContext _datacontext;
         public BrandController(DataContext context)

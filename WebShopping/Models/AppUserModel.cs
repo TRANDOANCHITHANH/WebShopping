@@ -6,6 +6,5 @@ namespace WebShopping.Models
 	{
 		public string Occupation {  get; set; }
 
-
 	}
 }
