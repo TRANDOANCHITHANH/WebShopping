@@ -9,7 +9,7 @@ using WebShopping.Repository;
 namespace WebShopping.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-	[Authorize]
+	/*[Authorize]*/
 	public class ProductController : Controller
 	{
 		private readonly DataContext _datacontext;
