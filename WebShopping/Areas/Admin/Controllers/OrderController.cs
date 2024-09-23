@@ -5,6 +5,7 @@ using WebShopping.Repository;
 namespace WebShopping.Areas.Admin.Controllers
 {
 	[Area("Admin")]
+	
 	public class OrderController : Controller
 	{
 		private readonly DataContext _datacontext;

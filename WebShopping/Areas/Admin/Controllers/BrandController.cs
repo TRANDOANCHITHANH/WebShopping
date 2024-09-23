@@ -7,8 +7,8 @@ using WebShopping.Repository;
 namespace WebShopping.Areas.Admin.Controllers
 {
     [Area("Admin")]
-	[Authorize]
-	public class BrandController : Controller
+    [Route("Admin/Brand")]
+    public class BrandController : Controller
     {
         private readonly DataContext _datacontext;
         public BrandController(DataContext context)
