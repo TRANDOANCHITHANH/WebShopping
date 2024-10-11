@@ -7,7 +7,8 @@ using WebShopping.Repository;
 namespace WebShopping.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Route("Admin/Brand")]
+/*    [Route("Admin/Role")]
+    [Authorize(Roles ="Admin")]*/
     public class BrandController : Controller
     {
         private readonly DataContext _datacontext;

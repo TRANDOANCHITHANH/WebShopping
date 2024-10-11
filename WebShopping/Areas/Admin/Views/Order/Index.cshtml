@@ -4,15 +4,13 @@
 }
 
 <h3>List Order</h3>
-<a asp-action="Create" asp-controller="Category">Add Category</a>
+
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">#</th>
             <th scope="col">Order Code</th>
             <th scope="col">User Name </th>
             <th scope="col">Order Date</th>
-     
             <th scope="col">Order Status</th>
             
         </tr>
@@ -25,7 +23,6 @@
                 <th scope="row">@item.OrderCode</th>
                 <td>@item.UserName</td>
                 <td>@item.CreateDate</td>
-        
                 <td>@if(@item.Status == 1)
                     {
                         <span class="text text-success">Đơn hàng mới</span>
