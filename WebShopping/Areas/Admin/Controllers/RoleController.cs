@@ -8,8 +8,8 @@ using WebShopping.Repository;
 namespace WebShopping.Areas.Admin.Controllers
 {
     [Area("Admin")]
-  /*  [Route("Admin/Role")]*/
- /*   [Authorize(Roles = "Admin")]*/
+    [Route("Admin/Role")]
+  /*  [Authorize(Roles = "Admin")]*/
     public class RoleController : Controller
     {
         private readonly DataContext _dataContext;
@@ -19,6 +19,7 @@ namespace WebShopping.Areas.Admin.Controllers
 			_roleManager = roleManager;
             _dataContext = dataContext;
         }
+        [HttpGet]
         [Route("Index")]
         public async Task<IActionResult> Index()
         {

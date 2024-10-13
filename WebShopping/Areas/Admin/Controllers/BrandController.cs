@@ -7,8 +7,8 @@ using WebShopping.Repository;
 namespace WebShopping.Areas.Admin.Controllers
 {
     [Area("Admin")]
-/*    [Route("Admin/Role")]
-    [Authorize(Roles ="Admin")]*/
+    [Route("Admin/Brand")]
+    /*[Authorize(Roles = "Admin")]*/
     public class BrandController : Controller
     {
         private readonly DataContext _datacontext;
@@ -17,17 +17,20 @@ namespace WebShopping.Areas.Admin.Controllers
             _datacontext = context;
 
         }
+        [Route("Index")]
         public async Task<IActionResult> Index()
         {
             return View(await _datacontext.Brands.OrderByDescending(p => p.Id).ToListAsync());
         }
         [HttpGet]
+        [Route("Create")]
         public IActionResult Create()
         {
 
             return View();
         }
         [HttpPost]
+        [Route("Index")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BrandModel brand)
         {
@@ -65,14 +68,16 @@ namespace WebShopping.Areas.Admin.Controllers
 
         }
 		[HttpGet]
-		public async Task<IActionResult> Edit(int Id)
+        [Route("Edit")]
+        public async Task<IActionResult> Edit(int Id)
 		{
 			BrandModel brand = await _datacontext.Brands.FindAsync(Id);
 
 			return View(brand);
 		}
 		[HttpPost]
-		[ValidateAntiForgeryToken]
+        [Route("Edit")]
+        [ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int Id, BrandModel brand)
 		{
 
@@ -110,7 +115,8 @@ namespace WebShopping.Areas.Admin.Controllers
 			return View(brand);
 
 		}
-		public async Task<IActionResult> Delete(int Id)
+        [Route("Delete")]
+        public async Task<IActionResult> Delete(int Id)
 		{
 			BrandModel brand = await _datacontext.Brands.FindAsync(Id);
 

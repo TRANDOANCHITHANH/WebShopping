@@ -9,8 +9,8 @@ using WebShopping.Repository;
 namespace WebShopping.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-	/*[Authorize]*/
-	public class ProductController : Controller
+    [Route("Admin/Product")]
+    public class ProductController : Controller
 	{
 		private readonly DataContext _datacontext;
 		private readonly IWebHostEnvironment _environment;
@@ -19,13 +19,14 @@ namespace WebShopping.Areas.Admin.Controllers
 			_datacontext = context;
 			_environment = _webHostEnvironment;
 		}
-
-		public async Task<IActionResult> Index()
+        [Route("Index")]
+        public async Task<IActionResult> Index()
 		{
 			return View(await _datacontext.Products.OrderByDescending(p => p.Id).Include(p => p.Category).Include(p => p.Brand).ToListAsync());
 		
 		}
 		[HttpGet]
+        [Route("Create")]
         public IActionResult Create()
         {
 			ViewBag.Categories = new SelectList(_datacontext.Categories,"Id","Name");
@@ -33,7 +34,8 @@ namespace WebShopping.Areas.Admin.Controllers
             return View();
         }
 		[HttpPost]
-		[ValidateAntiForgeryToken]
+        [Route("Create")]
+        [ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(ProductModel productModel)
 		{
 			ViewBag.Categories = new SelectList(_datacontext.Categories, "Id", "Name", productModel.CategoryId);
@@ -82,7 +84,8 @@ namespace WebShopping.Areas.Admin.Controllers
 
 		}
 		[HttpGet]
-		public async Task<IActionResult> Edit(int Id)
+        [Route("Edit")]
+        public async Task<IActionResult> Edit(int Id)
 		{
 			ProductModel product = await _datacontext.Products.FindAsync(Id);
 			ViewBag.Categories = new SelectList(_datacontext.Categories, "Id", "Name", product.CategoryId);
@@ -90,7 +93,8 @@ namespace WebShopping.Areas.Admin.Controllers
 			return View(product);
 		}
 		[HttpPost]
-		[ValidateAntiForgeryToken]
+        [Route("Edit")]
+        [ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int Id, ProductModel productModel)
 		{
 			ViewBag.Categories = new SelectList(_datacontext.Categories, "Id", "Name", productModel.CategoryId);
@@ -138,8 +142,8 @@ namespace WebShopping.Areas.Admin.Controllers
 			return View(productModel);
 
 		}
-		
-		public async Task<IActionResult> Delete(int Id)
+        [Route("Delete")]
+        public async Task<IActionResult> Delete(int Id)
 		{
 			ProductModel product = await _datacontext.Products.FindAsync(Id);
 			if (!string.Equals(product.Image, "noname.jpg"))
