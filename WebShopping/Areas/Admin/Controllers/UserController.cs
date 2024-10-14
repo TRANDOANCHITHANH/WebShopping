@@ -47,25 +47,25 @@ namespace WebShopping.Areas.Admin.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Route("Create")]
-		public async Task<IActionResult> Create(AppUserModel user, string role)
+		public async Task<IActionResult> Create(AppUserModel user)
 		{
 			if (ModelState.IsValid)
 			{
-				// Tạo người dùng với mật khẩu (chưa nên dùng PasswordHash)
+				
 				var createUserResult = await _userManager.CreateAsync(user, user.PasswordHash);
 				if (createUserResult.Succeeded)
 				{
-					// Lấy lại người dùng vừa tạo để có thông tin về UserId
+					
 					var createUser = await _userManager.FindByEmailAsync(user.Email);
 
 					if (createUser != null)
 					{
-						// Tìm vai trò bằng tên (hoặc Id nếu cần)
+						
 						var roleData = await _roleManager.FindByIdAsync(user.RoleId);
 
 						if (roleData != null)
 						{
-							// Gán người dùng vào vai trò
+							
 							var addToRoleResult = await _userManager.AddToRoleAsync(user, roleData.Name);
 							if (addToRoleResult.Succeeded)
 							{
@@ -73,7 +73,7 @@ namespace WebShopping.Areas.Admin.Controllers
 							}
 							else
 							{
-								// Thêm các lỗi từ việc gán vai trò
+								
 								foreach (var error in addToRoleResult.Errors)
 								{
 									ModelState.AddModelError(string.Empty, error.Description);
@@ -95,7 +95,7 @@ namespace WebShopping.Areas.Admin.Controllers
 					}
 				}
 
-				// Nếu có lỗi, trả về view với model để hiển thị lại form
+				
 				return View(user);
 			}
 			else
@@ -114,6 +114,119 @@ namespace WebShopping.Areas.Admin.Controllers
 				return View(user);
 			}
 		}
+        [HttpGet]
+        [Route("Edit")]
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var roles = await _roleManager.Roles.ToListAsync();
+            ViewBag.Roles = new SelectList(roles, "Id", "Name");
+			
+			var userRole = await _userManager.GetRolesAsync(user);
+			if (userRole.Any())
+			{
+		
+				var currentRole = roles.FirstOrDefault(r => r.Name == userRole.FirstOrDefault());
+				if (currentRole != null)
+				{
+					user.RoleId = currentRole.Id;
+				}
+			}
+			return View(user);
+        }
+        [HttpPost]
+        [Route("Edit")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(AppUserModel user, string id)
+        {
+            var existingUser = await _userManager.FindByIdAsync(id);
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
 
+            if (ModelState.IsValid)
+            {
+                existingUser.Email = user.Email;
+                existingUser.UserName = user.UserName;
+                existingUser.PhoneNumber = user.PhoneNumber;
+
+                var updateUserResult = await _userManager.UpdateAsync(existingUser);
+
+                if (updateUserResult.Succeeded)
+                {
+                   
+                    var currentRoles = await _userManager.GetRolesAsync(existingUser);
+                    var newRole = await _roleManager.FindByIdAsync(user.RoleId);
+
+                    if (newRole != null)
+                    {
+                       
+                        if (currentRoles.Any())
+                        {
+                            await _userManager.RemoveFromRolesAsync(existingUser, currentRoles);
+                        }
+
+                        var addToRoleResult = await _userManager.AddToRoleAsync(existingUser, newRole.Name);
+
+                        if (addToRoleResult.Succeeded)
+                        {
+                            TempData["success"] = "Update user thành công";
+                            return RedirectToAction("Index", "User");
+                        }
+                        else
+                        {
+                            foreach (var error in addToRoleResult.Errors)
+                            {
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var error in updateUserResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(existingUser);
+                }
+            }
+
+            var roles = await _roleManager.Roles.ToListAsync();
+            ViewBag.Role = new SelectList(roles, "Id", "Name");
+            TempData["error"] = "Model validation failed";
+            return View(existingUser);
+        }
+
+        [HttpGet]
+		[Route("Delete")]
+		public async Task<IActionResult> Delete(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				return NotFound();
+			}
+			var user = await _userManager.FindByIdAsync(id);
+			if (user == null)
+			{
+				return NotFound();
+			}
+			var deleteResult = await _userManager.DeleteAsync(user);
+			if (!deleteResult.Succeeded)
+			{
+				return View("Error");
+			}
+			TempData["success"] = "User đã được xóa thành công";
+			return RedirectToAction("Index");
+		}
 	}
 }

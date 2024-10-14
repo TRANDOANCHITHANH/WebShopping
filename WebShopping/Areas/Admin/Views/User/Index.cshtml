@@ -1,26 +1,30 @@
 ﻿<h3>List User</h3>
 <a asp-action="Create" asp-controller="User">Add User</a>
-<table class="table">
+<table class="table table-striped table-bordered">
     <thead>
         <tr>
             <th scope="col">Id</th>
             <th scope="col">User Name</th>
             <th scope="col">Email</th>
-            <th scope="col">PasswordHash</th>
+            <th scope="col">Password</th>
             <th scope="col">Phone</th>
             <th scope="col">Role</th>
             <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
-
         @foreach (var usersWithRoles in Model)
         {
             <tr>
                 <td>@usersWithRoles.User.Id</td>
                 <td>@usersWithRoles.User.UserName</td>
                 <td>@usersWithRoles.User.Email</td>
-                <td>@usersWithRoles.User.PasswordHash</td>
+                <td>
+                    <!-- Giới hạn độ dài của mật khẩu hiển thị -->
+                    @(usersWithRoles.User.PasswordHash?.Length > 10
+                        ? usersWithRoles.User.PasswordHash.Substring(0, 10) + "..."
+                        : usersWithRoles.User.PasswordHash)
+                </td>
                 <td>@usersWithRoles.User.PhoneNumber</td>
                 <td>@usersWithRoles.RoleName</td>
                 <td>

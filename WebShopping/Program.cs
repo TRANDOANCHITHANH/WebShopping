@@ -37,7 +37,8 @@ namespace WebShopping
 			  );*/
 			builder.Services.AddIdentity<AppUserModel,IdentityRole>()
 	  .AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
-			builder.Services.Configure<IdentityOptions>(options =>
+            builder.Services.AddRazorPages();
+            builder.Services.Configure<IdentityOptions>(options =>
 			{
 				// Password settings.
 				options.Password.RequireDigit = true;
@@ -48,6 +49,7 @@ namespace WebShopping
 				
 				options.User.RequireUniqueEmail = false;
 			});
+            
 			var app = builder.Build();
             app.UseStatusCodePagesWithRedirects("/Home/Error?statuscode={0}");
             app.UseSession();
@@ -55,13 +57,19 @@ namespace WebShopping
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
+            else
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
+          
 			app.MapControllerRoute(
 			   name: "areas",
 			pattern: "{area:exists}/{controller=Product}/{action=Index}/{id?}"
