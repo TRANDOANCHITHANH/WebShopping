@@ -20,11 +20,26 @@ namespace WebShopping.Areas.Admin.Controllers
 			_environment = _webHostEnvironment;
 		}
         [Route("Index")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pg=1)
 		{
-			return View(await _datacontext.Products.OrderByDescending(p => p.Id).Include(p => p.Category).Include(p => p.Brand).ToListAsync());
-		
-		}
+            List<ProductModel> products = _datacontext.Products
+			.Include(p => p.Category)  
+			.Include(p => p.Brand)     
+			.ToList();
+            const int pageSize = 10;
+            if (pg < 1)
+            {
+                pg = 1;
+            }
+            int recsCount = products.Count;
+            var paper = new Paginate(recsCount, pg, pageSize);
+            int recSkip = (pg - 1) * pageSize;
+            var data = products.Skip(recSkip).Take(paper.PageSize).ToList();
+            ViewBag.Paper = paper;
+
+            return View(data);
+
+        }
 		[HttpGet]
         [Route("Create")]
         public IActionResult Create()

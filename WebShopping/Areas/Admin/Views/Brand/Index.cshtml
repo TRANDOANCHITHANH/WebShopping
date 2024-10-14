@@ -1,4 +1,14 @@
 ﻿@model IEnumerable<BrandModel>
+@{
+    ViewData["title"] = "List Brand";
+    Paginate paper = new Paginate();
+    int pageNo = 0;
+    if (ViewBag.Paper != null)
+    {
+        paper = ViewBag.Paper;
+        pageNo = paper.CurrentPage;
+    }
+}
 <h3>List Brand</h3>
 <a asp-action="Create" asp-controller="Brand">Add Brand</a>
 <table class="table">
@@ -43,3 +53,4 @@
         }
     </tbody>
 </table>
+<partial name="_paging" model="paper" />

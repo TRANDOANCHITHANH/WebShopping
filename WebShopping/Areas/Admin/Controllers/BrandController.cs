@@ -18,9 +18,21 @@ namespace WebShopping.Areas.Admin.Controllers
 
         }
         [Route("Index")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pg = 1)
         {
-            return View(await _datacontext.Brands.OrderByDescending(p => p.Id).ToListAsync());
+            List<BrandModel> brands = _datacontext.Brands.ToList();
+            const int pageSize = 10;
+            if (pg < 1)
+            {
+                pg = 1;
+            }
+            int recsCount = brands.Count;
+            var paper = new Paginate(recsCount, pg, pageSize);
+            int recSkip = (pg - 1) * pageSize;
+            var data = brands.Skip(recSkip).Take(paper.PageSize).ToList();
+            ViewBag.Paper = paper;
+
+            return View(data);
         }
         [HttpGet]
         [Route("Create")]

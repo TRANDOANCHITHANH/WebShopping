@@ -1,4 +1,14 @@
 ﻿@model IEnumerable<CategoryModel>
+@{
+    ViewData["title"] = "List Category";
+    Paginate paper = new Paginate();
+    int pageNo = 0;
+    if (ViewBag.Paper != null)
+    {
+        paper = ViewBag.Paper;
+        pageNo = paper.CurrentPage;
+    }
+}
 <h3>List Category</h3>
 <a asp-action="Create" asp-controller="Category">Add Category</a>
 <table class="table">
@@ -42,3 +52,4 @@
         }
     </tbody>
 </table>
+<partial name="_paging" model="paper" />

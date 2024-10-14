@@ -8,8 +8,9 @@ using WebShopping.Repository;
 namespace WebShopping.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-    [Authorize(Roles = "Admin")]
-    public class CategoryController : Controller
+	/*[Authorize(Roles = "Admin")]*/
+	[Route("Admin/Category")]
+	public class CategoryController : Controller
 	{
 		private readonly DataContext _datacontext;
 		public CategoryController(DataContext context)
@@ -17,18 +18,33 @@ namespace WebShopping.Areas.Admin.Controllers
 			_datacontext = context;
 			
 		}
-		public async Task <IActionResult> Index()
+		[Route("Index")]
+		public async Task <IActionResult> Index(int pg = 1)
 		{
-			return View(await _datacontext.Categories.OrderByDescending(p => p.Id).ToListAsync());
+			List<CategoryModel>category = _datacontext.Categories.ToList();
+			const int pageSize = 10;
+			if (pg < 1)
+			{
+				pg = 1;
+			}
+			int recsCount = category.Count;
+			var paper = new Paginate(recsCount, pg,pageSize);
+			int recSkip = (pg - 1) * pageSize;
+			var data = category.Skip(recSkip).Take(paper.PageSize).ToList();
+			ViewBag.Paper = paper;
+			
+			return View(data);
 		}
         [HttpGet]
+		[Route("Create")]
         public IActionResult Create()
         {
            
             return View();
         }
 		[HttpPost]
-		[ValidateAntiForgeryToken]
+        [Route("Create")]
+        [ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(CategoryModel category)
 		{
 			
@@ -65,14 +81,16 @@ namespace WebShopping.Areas.Admin.Controllers
 
 		}
 		[HttpGet]
-		public async Task<IActionResult> Edit(int Id)
+        [Route("Edit")]
+        public async Task<IActionResult> Edit(int Id)
 		{
 			CategoryModel category = await _datacontext.Categories.FindAsync(Id);
 			
 			return View(category);
 		}
 		[HttpPost]
-		[ValidateAntiForgeryToken]
+        [Route("Edit")]
+        [ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int Id, CategoryModel category)
 		{
 		
@@ -110,7 +128,8 @@ namespace WebShopping.Areas.Admin.Controllers
 			return View(category);
 
 		}
-		public async Task<IActionResult> Delete(int Id)
+        [Route("Delete")]
+        public async Task<IActionResult> Delete(int Id)
 		{
 			CategoryModel category = await _datacontext.Categories.FindAsync(Id);
 			
