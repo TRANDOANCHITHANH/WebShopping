@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebShopping.Areas.Admin.Repository;
 using WebShopping.Models;
 using WebShopping.Repository;
 
@@ -15,6 +16,8 @@ namespace WebShopping
                 options.UseSqlServer(builder.Configuration["ConnectionStrings:ConnectedDb"]);
             }
             );
+            //Add Email Sender
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDistributedMemoryCache();

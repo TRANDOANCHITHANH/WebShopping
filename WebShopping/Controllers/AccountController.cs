@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using WebShopping.Areas.Admin.Repository;
 using WebShopping.Models;
 
 namespace WebShopping.Controllers
@@ -8,10 +9,12 @@ namespace WebShopping.Controllers
 	{
 		private UserManager<AppUserModel> _userManager ;
 		private SignInManager<AppUserModel> _signInManager ;
-		public AccountController(SignInManager<AppUserModel> signInManager, UserManager<AppUserModel> userManager)
+		private readonly IEmailSender _emailSender ;
+		public AccountController(IEmailSender emailSender, SignInManager<AppUserModel> signInManager, UserManager<AppUserModel> userManager)
 		{
 			_signInManager = signInManager;
 			_userManager = userManager;	
+			_emailSender = emailSender;
 		}
 		public IActionResult Login(string returnUrl)
 		{
@@ -25,6 +28,8 @@ namespace WebShopping.Controllers
 				Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(loginVM.UserName, loginVM.Password, false, false);
 				if (result.Succeeded)
 				{
+					TempData["success"] = "Đăng nhập thành công";
+					
 					return Redirect(loginVM.ReturnUrl ?? "/");
 				}
 				ModelState.AddModelError("", "Thông tin username hoặc password không đúng");
