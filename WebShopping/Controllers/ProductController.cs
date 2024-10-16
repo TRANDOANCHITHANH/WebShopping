@@ -27,5 +27,11 @@ namespace WebShopping.Controllers
 			var productsById = _dataContext.Products.Where(p => p.Id == Id).FirstOrDefault();
 			return View( productsById);
 		}
+		public async Task<IActionResult> Search(string searchTerm)
+		{
+			var products = await _dataContext.Products.Where(p=>p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm)).ToListAsync();
+			ViewBag.Keyword = searchTerm;
+			return View(products);
+		}
 	}
 }

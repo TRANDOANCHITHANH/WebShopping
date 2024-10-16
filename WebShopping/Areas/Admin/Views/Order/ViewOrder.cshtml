@@ -10,12 +10,13 @@
 <table class="table">
     <thead>
         <tr>
+            <th scope="col">Id</th>
             <th scope="col">Order Code</th>
             <th scope="col">User Name </th>
             <th scope="col">Product Name</th>
             <th scope="col">Price</th>
             <th scope="col">Quantity</th>
-            <th scope="col"></th>
+            <th scope="col">Subtotal</th>
         </tr>
     </thead>
     <tbody>
@@ -53,7 +54,8 @@
         <tr>
             <th colspan="5">Total:</th>
             <td>@total.ToString("C")</td>
-            <td><select class="form-control select-update-order">
+            <td>
+                <select class="form-control select-update-order">
                 <option value="1">
                     Đơn hàng mới
                 </option>
@@ -63,13 +65,12 @@
         </tr>
     </tbody>
 </table>
+@section Scripts{
 <script>
     $(document).ready(function () {
         $('.select-update-order').change(function () {
             var status = $(this).val();
             var ordercode = $('.getId').val();
-            alert(status);
-            alert(ordercode);
             $.ajax({
                 type: "POST",
                 url: "@Url.Action("UpdateOrder")",
@@ -89,3 +90,4 @@
         });
     });
 </script>
+}

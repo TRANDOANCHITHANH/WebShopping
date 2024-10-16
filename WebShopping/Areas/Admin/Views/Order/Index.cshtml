@@ -5,13 +5,14 @@
 
 <h3>List Order</h3>
 
-<table class="table">
+<table class="table-hover" id="mytablee">
     <thead>
         <tr>
             <th scope="col">Order Code</th>
             <th scope="col">User Name </th>
             <th scope="col">Order Date</th>
             <th scope="col">Order Status</th>
+            <th scope="col">Action</th>
             
         </tr>
     </thead>
@@ -42,3 +43,8 @@
         }
     </tbody>
 </table>
+@section Scripts{
+    <script>
+        let table = new DataTable('#mytablee');
+    </script>
+}

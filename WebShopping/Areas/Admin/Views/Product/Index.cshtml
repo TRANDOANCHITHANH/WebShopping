@@ -11,7 +11,7 @@
 }
 <h3>List Product</h3>
 <a asp-action="Create" asp-controller="Product">Add Product</a>
-    <table class="table">
+    <table class="table hover" id="mytable">
         <thead>
             <tr>
                 <th scope="col">Product Id</th>
@@ -48,3 +48,8 @@
         </tbody>
     </table>
 <partial name="_paging" model="paper" />
+@section Scripts{
+    <script>
+        let table = new DataTable('#mytable');
+        </script>
+}

@@ -31,7 +31,10 @@
 							<p>Danh mục: @item.Category.Name</p>
 							<p>Thương hiệu: @item.Brand.Name</p>
 							</a>
-							<a class="btn btn-default add-to-cart" asp-action="Add" asp-controller="Cart" asp-route-Id="@item.Id"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+@* 							<a class="btn btn-default add-to-cart" asp-action="Add" asp-controller="Cart" asp-route-Id="@item.Id"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+ *@							<button class="btn btn-default add-to-cart" data-product_id="@item.Id" >
+								<i class="fa fa-shopping-cart"></i> Thêm giỏ hàng
+							</button>
 						</div>
 						
 					</div>
@@ -45,12 +48,46 @@
 				</div>
 			</div>
 		}
-
-
 	</div><!--features_items-->
-
-
-
-
-
 </div>
+@section Scripts{
+	<script>
+		$(document).ready(function(){
+			$('.add-to-cart').click(function () {
+				var Id = $(this).data("product_id");
+				$.ajax({
+					type: "Post",
+					url: "@Url.Action("Add","Cart")",
+					data: { Id: Id },
+					success: function (result) {
+						if (result) {
+							Swal.fire({
+								title: 'Thành công!',
+								text: 'Sản phẩm đã được thêm vào giỏ hàng.',
+								icon: 'success',
+								showCancelButton: true,
+								confirmButtonText: 'Xem giỏ hàng',
+								cancelButtonText: 'Tiếp tục mua sắm',
+								confirmButtonColor: '#3085d6',
+								cancelButtonColor: '#d33',
+								background: '#fff', 
+								iconColor: '#28a745',  
+								customClass: {
+									title: 'swal2-title',  
+									confirmButton: 'swal2-confirm',  
+									cancelButton: 'swal2-cancel',  
+								},
+								timer: 3000,
+								timerProgressBar: true
+							}).then((result) => {
+								if (result.isConfirmed) {
+									window.location.href = '/Cart';
+								}
+							});
+						}
+					}
+				});
+			});
+		});
+	</script>
+}
