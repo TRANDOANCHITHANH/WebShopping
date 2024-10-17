@@ -114,6 +114,7 @@ namespace WebShopping.Areas.Admin.Controllers
 		{
 			ViewBag.Categories = new SelectList(_datacontext.Categories, "Id", "Name", productModel.CategoryId);
 			ViewBag.Brands = new SelectList(_datacontext.Brands, "Id", "Name", productModel.BrandId);
+			var existed = _datacontext.Products.Find(productModel.Id); 
 			if (ModelState.IsValid)
 			{
 				productModel.Slug = productModel.Name.Replace(" ", "-");
@@ -125,16 +126,36 @@ namespace WebShopping.Areas.Admin.Controllers
 				}
 				if (productModel.ImageUpload != null)
 				{
+				
 					string uploadsDir = Path.Combine(_environment.WebRootPath, "media/products");
 					string imageName = Guid.NewGuid().ToString() + "_" + productModel.ImageUpload.FileName;
 					string filePath = Path.Combine(uploadsDir, imageName);
+					string oldFilePath = Path.Combine(uploadsDir, productModel.Image);
+					try
+					{
+						if (System.IO.File.Exists(oldFilePath))
+						{
+							System.IO.File.Delete(oldFilePath);
+
+						}
+					}
+					catch (Exception ex)
+					{
+						ModelState.AddModelError("", "An error occured while deleting the product image");
+					}
 					FileStream fs = new FileStream(filePath, FileMode.Create);
 					await productModel.ImageUpload.CopyToAsync(fs);
 					fs.Close();
-					productModel.Image = imageName;
-				}
+					existed.Image = imageName;
 
-				_datacontext.Update(productModel);
+					
+				}
+				existed.Name = productModel.Name;			
+				existed.Description = productModel.Description;
+				existed.Price = productModel.Price;
+				existed.CategoryId = productModel.CategoryId;
+				existed.BrandId = productModel.BrandId;
+				_datacontext.Update(existed);
 				await _datacontext.SaveChangesAsync();
 				TempData["success"] = "Cập nhật sản phẩm thành công";
 				return RedirectToAction("Index");
