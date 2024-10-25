@@ -1,4 +1,4 @@
-﻿
+﻿@model ProductDetailsViewModel
 
 <div class="row">
 	<div class="col-sm-3">
@@ -10,7 +10,7 @@
 			<!--product-details-->
 			<div class="col-sm-5">
 				<div class="view-product">
-					<img src="~/images/@Model.Image" class="newarrival" alt="@Model.Name" />
+					<img src="~/images/@Model.ProductDetails.Image" class="newarrival" alt="" />
 					<h3>ZOOM</h3>
 				</div>
 				<div id="similar-product" class="carousel slide" data-ride="carousel">
@@ -40,10 +40,10 @@
 				<div class="product-information">
 					<!--/product-information-->
 					
-					<h2>@Model.Name</h2>
+					<h2>@Model.ProductDetails.Name</h2>
 
 					<span>
-						<span>US $@Model.Price</span>
+						<span>US $@Model.ProductDetails.Price</span>
 						<label>Quantity: 1</label>
 						<input type="text" value="3" />
 						<button type="button" class="btn btn-fefault cart">
@@ -52,9 +52,9 @@
 						</button>
 					</span>
 					<p><b>Condition:</b> New</p>
-					<p><b>Brand:</b> @Model.Brand.Name</p>
-					<p><b>Category:</b> @Model.Category.Name</p>
-					<a href=""><img src="~/images/@Model.Image class="newarrival" alt="@Model.Name" /></a>
+					<p><b>Brand:</b> @Model.ProductDetails.Brand.Name</p>
+					<p><b>Category:</b> @Model.ProductDetails.Category.Name</p>
+					<a href=""><img src="~/images/@Model.ProductDetails.Image class="newarrival" alt="" /></a>
 				</div><!--/product-information-->
 			</div>
 		</div><!--/product-details-->
@@ -72,7 +72,7 @@
 			<div class="tab-content">
 				<div class="tab-pane fade active in" id="details">
 				
-					@Model.Description
+					@Model.ProductDetails.Description
 				</div>
 
 				<div class="tab-pane fade" id="companyprofile">
@@ -187,12 +187,17 @@
 						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
 						<p><b>Write Your Review</b></p>
 
-						<form action="#">
+						<form asp-action="CommentProduct" autocomplete="off" asp-controller="Product" method="post">
 							<span>
-								<input type="text" placeholder="Your Name" />
-								<input type="email" placeholder="Email Address" />
+								<input asp-for="@Model.ProductDetails.Id" name="ProductId" type="hidden" />
+								<input name="Star" type="hidden" value="4"/>
+								<input asp-for="@Model.Name" type="text" placeholder="Your Name" />
+								<span asp-validation-for="Name" class="text-danger"></span>
+								<input asp-for="@Model.Email" type="email" placeholder="Email Address" />
+								<span asp-validation-for="Email" class="text-danger"></span>
 							</span>
-							<textarea name=""></textarea>
+							<textarea asp-for="@Model.Comment"></textarea>
+							<span asp-validation-for="Comment" class="text-danger"></span>
 							<b>Rating: </b> <img src="images/product-details/rating.png" alt="" />
 							<button type="button" class="btn btn-default pull-right">
 								Submit

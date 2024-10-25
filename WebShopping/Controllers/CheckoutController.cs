@@ -2,11 +2,12 @@
 using System.Security.Claims;
 using WebShopping.Areas.Admin.Repository;
 using WebShopping.Models;
+using WebShopping.Models.ViewModels;
 using WebShopping.Repository;
 
 namespace WebShopping.Controllers
 {
-	public class CheckoutController : Controller
+    public class CheckoutController : Controller
 	{
 		private readonly DataContext _dataContext;
 		private readonly IEmailSender _emailSender;

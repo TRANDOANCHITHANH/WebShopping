@@ -4,7 +4,7 @@ using WebShopping.Models;
 
 namespace WebShopping.Repository
 {
-	public class DataContext : IdentityDbContext<AppUserModel>
+    public class DataContext : IdentityDbContext<AppUserModel>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -15,6 +15,7 @@ namespace WebShopping.Repository
         public DbSet<CategoryModel> Categories { get; set; }
         public DbSet<OrderModel> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
-		public DbSet<RatingModel> Ratings { get; set; }
-	}
+        public DbSet<RatingModel> Ratings { get; set; }
+        public DbSet<ProductQuantityModel> ProductQuantities { get; set; }
+    }
 }

@@ -5,7 +5,7 @@ using WebShopping.Repository;
 
 namespace WebShopping.Controllers
 {
-	public class CartController : Controller
+    public class CartController : Controller
 	{
 		private readonly DataContext _dataContext;
 		public CartController(DataContext context)

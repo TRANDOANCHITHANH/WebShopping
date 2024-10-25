@@ -6,7 +6,7 @@ namespace WebShopping.Models
 {
 	public class ProductModel
 	{
-		
+
 		[Key]
 		public int Id { get; set; }
 
@@ -17,14 +17,16 @@ namespace WebShopping.Models
 		public string Description { get; set; }
 		[Required(ErrorMessage = "Yêu cầu nhập giá sản phẩm")]
 		public decimal Price { get; set; }
-	
+		public int Quantity { get; set; }
+		public int Sold { get; set; }
 		public string Slug { get; set; }
-		[Required,Range(1,int.MaxValue,ErrorMessage ="Chọn một thương hiệu")]
+		[Required, Range(1, int.MaxValue, ErrorMessage = "Chọn một thương hiệu")]
 		public int BrandId { get; set; }
 		[Required, Range(1, int.MaxValue, ErrorMessage = "Chọn một danh mục")]
 		public int CategoryId { get; set; }
 		public CategoryModel Category { get; set; }
 		public BrandModel Brand { get; set; }
+		public RatingModel Rating { get; set; }
 		public string Image { get; set; } = "noimage.jpg";
 		[NotMapped]
 		[FileExtension]
