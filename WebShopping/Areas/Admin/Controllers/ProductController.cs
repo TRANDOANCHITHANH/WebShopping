@@ -199,13 +199,15 @@ namespace WebShopping.Areas.Admin.Controllers
 		[HttpGet]
 		public async Task<IActionResult> AddQuantity(int Id)
 		{
+			var productByQuantity = await _datacontext.ProductQuantities.Where(p => p.Quantity == Id).ToListAsync();
+			ViewBag.ProductByQuantity = productByQuantity;
 			ViewBag.Id = Id;
 			return View();
 		}
 		[Route("StoreProductQuantity")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> UpdateMoreQuantity(ProductQuantityModel productQuantityModel)
+		public async Task<IActionResult> StoreProductQuantity(ProductQuantityModel productQuantityModel)
 		{
 			var product = _datacontext.Products.Find(productQuantityModel.ProductId);
 			if (product == null)
