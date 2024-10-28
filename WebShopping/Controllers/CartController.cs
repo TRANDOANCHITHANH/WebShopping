@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebShopping.Models;
 using WebShopping.Models.ViewModels;
 using WebShopping.Repository;
 
 namespace WebShopping.Controllers
 {
-    public class CartController : Controller
+	public class CartController : Controller
 	{
 		private readonly DataContext _dataContext;
 		public CartController(DataContext context)
@@ -68,16 +69,18 @@ namespace WebShopping.Controllers
 		}
 		public async Task<IActionResult> Increase(int Id)
 		{
-
+			ProductModel product = await _dataContext.Products.Where(p => p.Id == Id).FirstOrDefaultAsync();
 			List<CartItemModel> cartItems = HttpContext.Session.GetJson<List<CartItemModel>>("Cart");
 			CartItemModel cartIM = cartItems.Where(c => c.ProductId == Id).FirstOrDefault();
-			if (cartIM.Quantity >= 1)
+			if (cartIM.Quantity >= 1 && product.Quantity > cartIM.Quantity)
 			{
 				++cartIM.Quantity;
+				TempData["success"] = "Tăng số lượng sản phẩm thành công";
 			}
 			else
 			{
-				cartItems.RemoveAll(p => p.ProductId == Id);
+				cartIM.Quantity = product.Quantity;
+				TempData["success"] = "Số lượng tối đa của sản phẩm. Thêm giỏ hàng thành công";
 			}
 			if (cartItems.Count == 0)
 			{

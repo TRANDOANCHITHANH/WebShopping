@@ -199,7 +199,7 @@ namespace WebShopping.Areas.Admin.Controllers
 		[HttpGet]
 		public async Task<IActionResult> AddQuantity(int Id)
 		{
-			var productByQuantity = await _datacontext.ProductQuantities.Where(p => p.Quantity == Id).ToListAsync();
+			var productByQuantity = await _datacontext.ProductQuantities.Where(p => p.ProductId == Id).ToListAsync();
 			ViewBag.ProductByQuantity = productByQuantity;
 			ViewBag.Id = Id;
 			return View();
@@ -209,7 +209,7 @@ namespace WebShopping.Areas.Admin.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> StoreProductQuantity(ProductQuantityModel productQuantityModel)
 		{
-			var product = _datacontext.Products.Find(productQuantityModel.ProductId);
+			var product = await _datacontext.Products.FindAsync(productQuantityModel.ProductId);
 			if (product == null)
 			{
 				return NotFound();
@@ -220,10 +220,17 @@ namespace WebShopping.Areas.Admin.Controllers
 			productQuantityModel.DateCreated = DateTime.Now;
 
 			_datacontext.Add(productQuantityModel);
-			_datacontext.SaveChangesAsync();
+			await _datacontext.SaveChangesAsync();
+
+			// Tải lại danh sách ProductQuantities cho ViewBag sau khi lưu thành công
+			ViewBag.ProductByQuantity = await _datacontext.ProductQuantities
+				.Where(p => p.ProductId == productQuantityModel.ProductId)
+				.OrderByDescending(p => p.DateCreated)
+				.ToListAsync();
+
 			TempData["success"] = "Thêm số lượng sản phẩm thành công";
 			return RedirectToAction("AddQuantity", "Product", new { Id = productQuantityModel.ProductId });
-
 		}
+
 	}
 }
