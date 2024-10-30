@@ -31,29 +31,16 @@
                 <td>@item.OrderCode</td>
                 <td>@item.UserName</td>
                 <td>@item.Product.Name</td>
-                <td>@item.Price</td>
+                <td>@item.Price.ToString("#,##0 VND")</td>
                 <td>@item.Quantity</td>
-                <td>@subtotal.ToString("C")</td>
-
-               @*  <td>@item.CreateDate</td>
-
-                <td>
-                    @if (@item.Status == 1)
-                    {
-                        <span class="text text-success">Đơn hàng mới</span>
-                    }
-                    else
-                    {
-                        <span class="text text-danger">Đơn hàng thành công</span>
-                    }
-                </td> *@
-
+                <td>@subtotal.ToString("#,##0 VND")</td>
              </tr>
 
         }
         <tr>
             <th colspan="5">Total:</th>
-            <td>@total.ToString("C")</td>
+            <td>@total.ToString("#,##0 VND")</td>
+            <td>Shipping Cost: @ViewBag.ShippingCost.ToString("#,##0 VND")</td>
             <td>
                 <select class="form-control select-update-order">
                 <option value="1">
