@@ -1,0 +1,81 @@
+﻿@model IEnumerable<CouponModel>
+@{
+    ViewData["title"] = "List Coupon";
+    Paginate paper = new Paginate();
+    int pageNo = 0;
+    if (ViewBag.Paper != null)
+    {
+        paper = ViewBag.Paper;
+        pageNo = paper.CurrentPage;
+    }
+}
+<h3>List Coupon</h3>
+<a asp-action="Create" asp-controller="Coupon">Add Coupon</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Date Start</th>
+            <th scope="col">Date Expired</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Active</th>
+            <th scope="col">Status</th>
+
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in ViewBag.CouponList)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@Html.Raw(item.Description)</td>
+                <td>@item.DateStart.ToString("dd-MM-yyyy")</td>
+                <td>@item.DateExpired.ToString("dd-MM-yyyy")</td>
+                <td>@item.Quantity</td>
+                <td>
+                    @if (@item.Status == 1)
+                    {
+                        <select name="Status">
+                            <option selected="1">Kích hoạt</option>
+                            <option value="0" >Ẩn</option>
+                        </select>
+                    }
+                    else
+                    {
+                        <select name="Status">
+                            <option value="1">Kích hoạt</option>
+                            <option selected="0">Ẩn</option>
+                        </select>
+                    }
+                </td>
+                <td>
+                    @if(item.DateExpired < DateTime.Now)
+                    {
+                        <span class="text text-danger">Expired</span>
+                    }
+                    else
+                    {
+                        TimeSpan remainingTime = item.DateExpired - DateTime.Now;
+                        int daysRemaining = remainingTime.Days;
+                        @if(daysRemaining == 0)
+                        {
+                            <span class="text text-danger">Today</span>
+                        }
+                        else
+                        {
+                            <span class="text text-success">@daysRemaining days left</span>
+                        }
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" class="btn btn-warning btn-sm" asp-controller="Coupon" asp-route-Id="@item.Id">Edit</a>
+                    <a asp-action="Delete" class="btn btn-danger btn-sm confirmDeletion" asp-controller="Coupon" asp-route-Id="@item.Id">Delete</a>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+<partial name="_paging" model="paper" />
