@@ -24,11 +24,14 @@ namespace WebShopping.Controllers
 				var shippingPriceJson = shippingPriceCookie;
 				shippingPrice = JsonConvert.DeserializeObject<decimal>(shippingPriceJson);
 			}
+			var coupon_code = Request.Cookies["CouponTitle"];
+
 			CartItemViewModel cartVM = new()
 			{
 				CartItems = cartItems,
 				GrandTotal = cartItems.Sum(x => x.Quantity * x.Price) + shippingPrice,
-				ShippingCost = shippingPrice
+				ShippingCost = shippingPrice,
+				CouponCode = coupon_code
 			};
 			return View(cartVM);
 		}
@@ -156,6 +159,43 @@ namespace WebShopping.Controllers
 		{
 			Response.Cookies.Delete("ShippingPrice");
 			return RedirectToAction("Index", "Cart");
+		}
+		[HttpPost]
+		[Route("Cart/GetCoupon")]
+		public async Task<IActionResult> GetCoupon(CouponModel couponModel, string coupon_value)
+		{
+			var validCoupon = await _dataContext.Coupons.FirstOrDefaultAsync(x => x.Name == coupon_value);
+			string couponTitle = validCoupon.Name + " | " + validCoupon?.Description;
+			if (couponTitle != null)
+			{
+				TimeSpan remainingTitle = validCoupon.DateExpired - DateTime.Now;
+				int daysRemaining = remainingTitle.Days;
+				if (daysRemaining >= 0)
+				{
+					try
+					{
+						var cookieOptions = new CookieOptions
+						{
+							HttpOnly = true,
+							Expires = DateTimeOffset.UtcNow.AddMinutes(30),
+							Secure = true,
+							SameSite = SameSiteMode.Strict
+						};
+						Response.Cookies.Append("CouponTitle", couponTitle, cookieOptions);
+						return Ok(new { success = true, message = "Coupon applied successfully" });
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine(ex.ToString());
+						return Ok(new { success = false, message = ex.ToString() });
+					}
+				}
+				else
+				{
+					return Ok(new { success = false, message = "Coupon not existed" });
+				}
+			}
+			return Json(new { CouponTitle = couponTitle });
 		}
 	}
 }

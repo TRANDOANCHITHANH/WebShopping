@@ -35,13 +35,15 @@ namespace WebShopping.Controllers
 					var shippingPriceJson = shippingPriceCookie;
 					shippingPrice = JsonConvert.DeserializeObject<decimal>(shippingPriceJson);
 				}
+				var coupon_code = Request.Cookies["CouponTitle"];
 				var orderItem = new OrderModel
 				{
 					OrderCode = orderCode,
 					ShippingCost = shippingPrice,
 					UserName = userEmail,
 					Status = 1,
-					CreateDate = DateTime.Now
+					CreateDate = DateTime.Now,
+					CouponCode = coupon_code,
 				};
 				_dataContext.Add(orderItem);
 				_dataContext.SaveChanges();

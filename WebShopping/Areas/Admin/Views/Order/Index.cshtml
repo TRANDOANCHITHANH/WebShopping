@@ -12,6 +12,7 @@
 			<th scope="col">User Name </th>
 			<th scope="col">Order Status</th>
 			<th scope="col">Shipping Cost</th>
+			<th scope="col">Coupon Code</th>
 			<th scope="col">Order Date</th>
 			<th scope="col">Action</th>
 
@@ -35,6 +36,7 @@
 					}
 				</td>
 				<td>@item.ShippingCost.ToString("#,##0 VND")</td>
+				<td>@item.CouponCode</td>
 				<td>@item.CreateDate</td>
 				<td>
 					<a asp-action="ViewOrder" class="btn btn-primary btn-sm" asp-controller="Order" asp-route-ordercode="@item.OrderCode">View details</a>
