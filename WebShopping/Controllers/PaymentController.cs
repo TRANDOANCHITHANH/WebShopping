@@ -1,19 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebShopping.Models;
+using WebShopping.Services.Momo;
 
 namespace WebShopping.Controllers
 {
 	public class PaymentController : Controller
 	{
-		private readonly string _accessKey;
-		private readonly string _secretKey;
-		public IActionResult Index()
+		private IMomoService _momoService;
+
+		public PaymentController(IMomoService momoService)
 		{
-			return View();
+			_momoService = momoService;
 		}
-		public PaymentController(IConfiguration configuration)
+
+		[HttpPost]
+		public async Task<IActionResult> CreatePaymentMomo(OrderInfoModel model)
 		{
-			_accessKey = configuration[""];
-			_secretKey = configuration[""];
+			var response = await _momoService.CreatePaymentMomo(model);
+			return Redirect(response.PayUrl);
+		}
+
+		[HttpGet]
+		public IActionResult PaymentCallback()
+		{
+			var response = _momoService.PaymentExecuteAsync(HttpContext.Request.Query);
+			return View(response);
 		}
 	}
+
 }

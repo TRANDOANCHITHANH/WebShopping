@@ -104,6 +104,15 @@
 									}
 								</td>		
 							}
+							<td>
+								<form method="post" asp-action="CreatePaymentMomo" asp-controller="Payment">
+									<input type="hidden" name="Amount" value="@Model.GrandTotal"/>
+									<input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()"/>
+									<input type="hidden" name="OrderInfomation" value="Thanh toán Momo cho đơn hàng"/>
+									<input type="hidden" name="FullName" value="thanhstore"/>
+									<button class="btn btn-payment" name="PayUrl" type="submit">Pay with Momo</button>
+								</form>
+							</td>
 						</tr>
 					}
 
