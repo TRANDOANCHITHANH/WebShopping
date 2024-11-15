@@ -4,8 +4,10 @@ using Newtonsoft.Json;
 using System.Security.Claims;
 using WebShopping.Areas.Admin.Repository;
 using WebShopping.Models;
+using WebShopping.Models.Momo;
 using WebShopping.Models.ViewModels;
 using WebShopping.Repository;
+using WebShopping.Services.Momo;
 
 namespace WebShopping.Controllers
 {
@@ -13,12 +15,13 @@ namespace WebShopping.Controllers
 	{
 		private readonly DataContext _dataContext;
 		private readonly IEmailSender _emailSender;
+		private IMomoService _momoService;
 		public CheckoutController(IEmailSender emailSender, DataContext context)
 		{
 			_dataContext = context;
 			_emailSender = emailSender;
 		}
-		public async Task<IActionResult> Checkout()
+		public async Task<IActionResult> Checkout(string OrderId)
 		{
 			var userEmail = User.FindFirstValue(ClaimTypes.Email);
 			if (userEmail == null)
@@ -44,6 +47,7 @@ namespace WebShopping.Controllers
 					Status = 1,
 					CreateDate = DateTime.Now,
 					CouponCode = coupon_code,
+					PaymentMethod = "COD"
 				};
 				_dataContext.Add(orderItem);
 				_dataContext.SaveChanges();
@@ -95,6 +99,43 @@ namespace WebShopping.Controllers
 				return RedirectToAction("Index", "Cart");
 			}
 			return View();
+		}
+		[HttpGet]
+		public async Task<IActionResult> PaymentCallBack(MomoInfoModel model)
+		{
+			var requestQuery = HttpContext.Request.Query;
+
+			// Kiểm tra resultCode
+			if (!requestQuery.TryGetValue("resultCode", out var resultCode) || resultCode != "0")
+			{
+				TempData["success"] = "Đã hủy giao dịch MoMo";
+				return RedirectToAction("Index", "Cart");
+			}
+
+			// Kiểm tra các tham số khác
+			if (!requestQuery.TryGetValue("orderId", out var orderId) ||
+				!requestQuery.TryGetValue("Amount", out var amountValue) ||
+				!decimal.TryParse(amountValue, out var amount) ||
+				!requestQuery.TryGetValue("orderInfo", out var orderInfo))
+			{
+				throw new ArgumentException("Missing or invalid query parameters from MoMo callback.");
+			}
+
+			// Lưu giao dịch vào database
+			var newMomoInsert = new MomoInfoModel
+			{
+				OrderId = orderId,
+				FullName = User.FindFirstValue(ClaimTypes.Email),
+				Amount = amount,
+				OrderInfo = orderInfo,
+				DatePaid = DateTime.Now
+			};
+
+			_dataContext.Add(newMomoInsert);
+			await _dataContext.SaveChangesAsync();
+			await Checkout(requestQuery["orderId"]);
+			var response = _momoService.PaymentExecuteAsync(requestQuery);
+			return View(response);
 		}
 	}
 }

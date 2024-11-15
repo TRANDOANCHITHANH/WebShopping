@@ -23,7 +23,7 @@ namespace WebShopping.Services.Momo
 				$"partnerCode={_options.Value.PartnerCode}" +
 				$"&accessKey={_options.Value.AccessKey}" +
 				$"&requestId={model.OrderId}" +
-				$"&amout={model.Amount}" +
+				$"&amount={model.Amount}" +
 				$"&orderId={model.OrderId}" +
 				$"&orderInfo={model.OrderInfomation}" +
 				$"&returnUrl={_options.Value.ReturnUrl}" +
@@ -36,16 +36,17 @@ namespace WebShopping.Services.Momo
 			// Create an object representing the request data
 			var requestData = new
 			{
-				accessKey = _options.Value.AccessKey,
 				partnerCode = _options.Value.PartnerCode,
+				accessKey = _options.Value.AccessKey,
 				requestType = _options.Value.RequestType,
-				notifyUrl = _options.Value.NotifyUrl,
-				returnUrl = _options.Value.ReturnUrl,
-				orderId = model.OrderId,
 				amount = model.Amount.ToString(),
+				orderId = model.OrderId,
 				orderInfo = model.OrderInfomation,
-				requestId = model.OrderId,
+				returnUrl = _options.Value.ReturnUrl,
+				notifyUrl = _options.Value.NotifyUrl,
 				extraData = "",
+				requestId = model.OrderId,
+
 				signature = signature
 			};
 			request.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
@@ -67,15 +68,14 @@ namespace WebShopping.Services.Momo
 
 		public string ComputeHmacSha256(string message, string secretKey)
 		{
-			var keyBytes = Encoding.UTF8.GetBytes(secretKey);
-			var messageBytes = Encoding.UTF8.GetBytes(message);
-			byte[] hashBytes;
-			using (var hmac = new HMACSHA256(keyBytes))
+			var encoding = new UTF8Encoding();
+			byte[] keyByte = encoding.GetBytes(secretKey);
+			byte[] messageBytes = encoding.GetBytes(message);
+			using (var hmacsha256 = new HMACSHA256(keyByte))
 			{
-				hashBytes = hmac.ComputeHash(messageBytes);
+				byte[] hashMessage = hmacsha256.ComputeHash(messageBytes);
+				return BitConverter.ToString(hashMessage).Replace("-", "").ToLower();
 			}
-			var hashString = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-			return hashString;
 		}
 	}
 }
